@@ -1,11 +1,11 @@
 name: Build Android APK
 
 on:
-  workflow_dispatch: # 支援手動按按鈕觸發打包
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04 # 使用穩定的 Linux 環境，避免 Python 3.14 相容性問題
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout Code
@@ -22,7 +22,6 @@ jobs:
           sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libstdc++6 cmake sysstat
           pip install --upgrade "buildozer<2.0.0" "cython<3.0.0"
 
-      # 關鍵快取：將 Buildozer 下載的 SDK/NDK 快取起來，下次打包僅需 2 分鐘
       - name: Cache Buildozer global directory
         uses: actions/cache@v4
         with:
@@ -31,12 +30,15 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # 預先建立授權資料夾並同意所有 Android SDK 條款
-          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-          echo -e "\n2433370235555b17003a276102b4f17e5213923d\n8933b53228463037b80827e373111978d1977800\n6010071578098680c61cc085572fe654f995706e\nd56f5187479451eabf01fb78af6dfcb131a6481e\ne6b7c2ee720506ea4742979942e5146332214d9f\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          # 1. 自動同意系統現有的 Android SDK 授權
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
           
-          # 執行打包
+          # 2. 強制建置並自動接受合約
           buildozer -v android debug
+        env:
+          # 直接指定 GitHub 雲端環境自帶的 Android SDK 與 NDK
+          ANDROID_HOME: ${{ env.ANDROID_HOME }}
+          ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_LATEST_HOME }}
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
