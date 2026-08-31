@@ -31,7 +31,12 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          yes | buildozer -v android debug
+          # 預先建立授權資料夾並同意所有 Android SDK 條款
+          mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+          echo -e "\n2433370235555b17003a276102b4f17e5213923d\n8933b53228463037b80827e373111978d1977800\n6010071578098680c61cc085572fe654f995706e\nd56f5187479451eabf01fb78af6dfcb131a6481e\ne6b7c2ee720506ea4742979942e5146332214d9f\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+          
+          # 執行打包
+          buildozer -v android debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
