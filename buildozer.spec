@@ -6,10 +6,10 @@
 [app]
 
 # (str) Title of your application
-title = My Application
+title = Owl Clock
 
 # (str) Package name
-package.name = myapp
+package.name = owlclock
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.test
@@ -18,7 +18,7 @@ package.domain = org.test
 source.dir = .
 
 # (list) Source files to include (leave empty to include all the files)
-source.include_exts = py,png,jpg,atlas
+source.include_exts = py,png,jpg,atlas,kv
 
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*,images/*.png
@@ -112,7 +112,7 @@ fullscreen = 1
 #android.api = 33
 
 # (int) Minimum API your APK / AAB will support.
-#android.minapi = 24
+#android.minapi = 21
 
 # (int) Android SDK version to use
 #android.sdk = 20
